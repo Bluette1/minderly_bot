@@ -21,3 +21,6 @@
 
 config/database.yml
 config/secrets.yml
+
+# Ignore node_modules
+node_modules/*

@@ -29,21 +29,21 @@ group :development do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 # gem 'telegram-bot'
-gem 'telegram-bot', '>= 0.14'
 gem 'daemons', require: false
+gem 'telegram-bot', '>= 0.14'
 
 group :development, :test do
-  gem 'rspec-rails'
-  gem 'rspec-its'
-  gem 'spring-commands-rspec'
   gem 'awesome_print'
   gem 'hirb'
   gem 'pry'
   gem 'pry-byebug', platforms: [:mri]
-  gem 'pry-nav', platforms: [:jruby]
   gem 'pry-doc', platforms: [:mri]
+  gem 'pry-nav', platforms: [:jruby]
   gem 'pry-rails'
+  gem 'rspec-its'
+  gem 'rspec-rails'
+  gem 'spring-commands-rspec'
 end
