@@ -4,7 +4,7 @@ require "rails"
 # Pick the frameworks you want:
 require "active_model/railtie"
 require "active_job/railtie"
-# require "active_record/railtie"
+require "active_record/railtie"
 require "action_controller/railtie"
 # require "action_mailer/railtie"
 require "action_view/railtie"
@@ -14,7 +14,11 @@ require "action_view/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(*Rails.groups)
+# Bundler.require(*Rails.groups)
+Bundler.require(*Rails.groups(
+  assets: %i[development test],
+  pry:    %i[development test],
+))
 
 module MinderlyBot
   class Application < Rails::Application
@@ -26,5 +30,16 @@ module MinderlyBot
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.bot_commands = [
+      '/start',
+      '/help',
+      '/stop',
+      '/news',
+      '/add_my_birthday',
+      '/add_birthday',
+      '/add_anniversary',
+      '/subscribe',
+      '/update'
+    ]
   end
 end

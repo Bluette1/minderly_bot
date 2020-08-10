@@ -70,6 +70,7 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
+    pg (1.2.3)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -145,6 +146,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    sqlite3 (1.3.13)
     telegram-bot (0.14.4)
       actionpack (>= 4.0, < 6.1)
       activesupport (>= 4.0, < 6.1)
@@ -167,6 +169,7 @@ DEPENDENCIES
   daemons
   hirb
   listen (~> 3.0.5)
+  pg
   pry
   pry-byebug
   pry-doc
@@ -179,6 +182,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
+  sqlite3 (~> 1.3.6)
   telegram-bot (>= 0.14)
   tzinfo-data
 
