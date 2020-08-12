@@ -14,6 +14,7 @@ This is project is associated with the capstone project at the end of the main R
 - It also sends out RSS feeds to subscribed users and channels.
 
 - The [Telegram Bot Api](https://core.telegram.org/bots/api) was used to build this project.
+- Built using the [telegram-bot](https://github.com/telegram-bot-rb/telegram-bot) gem.
 
 ## Live Demo
 

@@ -59,5 +59,3 @@ Style/HashTransformValues:
   Enabled: false
 Style/GlobalVars:
   Enabled: false
-Metrics/MethodLength:
-  Enabled: false
