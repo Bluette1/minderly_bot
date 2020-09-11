@@ -35,11 +35,18 @@ module MinderlyBot
       '/help',
       '/stop',
       '/news',
-      '/add_my_birthday',
-      '/add_birthday',
-      '/add_anniversary',
+      '/change_my_birthday',
+      '/change_or_add_birthday',
+      '/change_or_add_anniversary',
       '/subscribe',
       '/update'
     ]
+    config.default_important_days = {
+      Christmas: [Date.parse("25/12/#{Date.today.year}"), 'Wishing you a Merry Christmas', 'B'],
+      Fathers_Day: [Date.parse("21/06/#{Date.today.year}"), 'Happy Father\'s day', 'M'],
+      Mothers_Day: [Date.parse("10/05/#{Date.today.year}"), 'Happy Mother\'s day', 'F']
+    }
+
+    config.group_id = {}
   end
 end

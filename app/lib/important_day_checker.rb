@@ -1,12 +1,9 @@
-require_relative './message_sender'
-
 class ImportantDayChecker
   attr_reader :config, :bot
 
   def initialize(options)
     @config = options[:config]
     @bot = options [:bot]
-    check_today
   end
 
   def check_today(user = nil)
@@ -27,11 +24,11 @@ class ImportantDayChecker
 
   def check_important_days(user = nil)
     if user.nil?
-      users = config.users
-      users.each do |user| # rubocop:todo Lint/ShadowingOuterLocalVariable
-        check_important_days_for_user user
+      users = User.all
+      users.each do |usr|
+        check_important_days_for_user usr
 
-        check_default_important_days user
+        check_default_important_days usr
       end
 
     else
@@ -43,7 +40,7 @@ class ImportantDayChecker
   end
 
   def check_default_important_days(user = nil) # rubocop:todo Metrics/CyclomaticComplexity
-    days = config.default_important_days
+    days = config[:default_important_days]
     days.each do |_day, details|
       next unless (today.month == details[0].month) && (today.day == details[0].day)
 
@@ -51,8 +48,8 @@ class ImportantDayChecker
       send_message user.chat_id, text_user unless user.nil? || user.sex != details[2]
 
       text_group = (details[1] + '!').center(55, '*')
-      send_message config.group_id, text_group unless config.group_id.nil?
-      send_message config.channel_id, text_group unless config.channel_id.nil?
+      send_message config[:group_id], text_group unless config[:group_id].nil?
+      send_message config[:channel_id], text_group unless config[:channel_id].nil?
     end
   end
 
@@ -79,8 +76,8 @@ class ImportantDayChecker
 
       text = "Happy #{day}, #{name}!".center(60, '*')
       send_message chat_id, text
-      send_message config.group_id, text unless config.group_id.nil?
-      send_message config.channel_id, text unless config.channel_id.nil?
+      send_message config[:group_id], text unless config[:group_id].nil?
+      send_message config[:channel_id], text unless config[:channel_id].nil?
     end
   end
 
@@ -89,8 +86,6 @@ class ImportantDayChecker
   end
 
   def send_message(chat_id, text)
-    MessageSender.new(
-      bot: bot, chat: nil, text: text
-    ).send_message chat_id
+    @bot.send_message(chat_id: chat_id, text: text)
   end
 end

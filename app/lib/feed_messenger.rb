@@ -1,13 +1,12 @@
 require 'rss'
 require 'open-uri'
-require_relative './message_sender'
 
 class FeedMessenger
-  attr_reader :config, :bot
+  attr_reader :bot, :config
 
   def initialize(options)
-    @config = options[:config]
     @bot = options [:bot]
+    @config = options [:config]
     @urls = [
       'https://www.history.com/.rss/full/this-day-in-history',
       'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
@@ -15,7 +14,6 @@ class FeedMessenger
       'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml',
       'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml'
     ]
-    send_feed
   end
 
   def send_feed(chat_id = nil)
@@ -66,7 +64,7 @@ class FeedMessenger
   end
 
   def send_to_users(news, channel, chat_id = nil)
-    users = config.users
+    users = User.all
     choice = rand(5)
     news_item = choose_news_item choice, news, channel
     if chat_id.nil?
@@ -81,9 +79,9 @@ class FeedMessenger
   def feed(chat_id, news_item)
     send_rss news_item, chat_id
 
-    send_rss news_item, config.group_id unless config.group_id.nil?
+    send_rss news_item, config[:group_id] unless config[:group_id].nil?
 
-    send_rss news_item, config.channel_id unless config.channel_id.nil?
+    send_rss news_item, config[:channel_id] unless config[:channel_id].nil?
   end
 
   def choose_news_item(choice, news, channel)
@@ -107,8 +105,6 @@ class FeedMessenger
     title = news_item[:title]
     link = news_item[:link]
 
-    MessageSender.new(
-      bot: bot, chat: nil, text: "#{channel}\n#{title}\n#{link}"
-    ).send_message chat_id
+    @bot.send_message(chat_id: chat_id, text: "#{channel}\n#{title}\n#{link}")
   end
 end

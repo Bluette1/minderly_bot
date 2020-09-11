@@ -1,5 +1,6 @@
 class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
+  include TelegramWebhooksHelper
   Rails.application.config.session_store :memory_store, key: '_minderly_bot_app'
   @@user_details = {}
   @@important_days = {}
@@ -7,34 +8,39 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   @@anniversaries = {}
   @@messages = []
   @@names = ''
-  def start!(*)
-    greetings = %w[
-      bonjour hola hallo sveiki namaste shalom salaam szia halo ciao
-    ]
+  @@ongoing_subscribe = false
 
-    first_name = from ? ', ' + from['first_name'] : ''
-    send_message "#{greetings.sample.capitalize}#{first_name}!\n Enter /help for options."
+  def start!(*)
+    send_greetings
+    check_today
   end
 
   def help!(*)
-    commands = Rails.configuration.bot_commands
-    send_message "Please enter any of the following commands: #{commands}"
+    send_options
   end
 
   def stop!(*)
     send_message "Bye, #{from['first_name']}!"
   end
 
+  def news!(*)
+    send_news message['chat']['id']
+  end
+
+  def message
+    payload
+  end
+
   def subscribe!(*)
-    message = payload
-    chat_id = message['chat']['id']
-    user = User.find_by(chat_id: chat_id)
-    unless user.nil?
+    find_user
+    unless @@user.nil?
       send_message "You are already subscribed, please enter '/update'"\
          'to update your subscription'
     end
 
-    @@user_details[:chat_id] = chat_id
+    @@ongoing_subscribe = true
+
+    @@user_details[:chat_id] = @@chat_id
 
     first_name = from ? from['first_name'] : 'channel'
     @@user_details[:first_name] = first_name
@@ -48,7 +54,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :add_gender, 'Please enter [m]ale or [f]emale for male or female respectively'
   end
 
-  def add_gender(gender)
+  def add_gender(gender = nil, *)
     context_message = "Enter your birthday in the format 'DD/MM/YYYY'"
     case gender[0].downcase
     when 'm'
@@ -63,22 +69,37 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
   end
 
+  def change_my_birthday!
+    prompt_user :add_my_birthday, "Enter your birthday in the format 'DD/MM/YYYY'"
+  end
+
   def add_my_birthday(date)
     date = retrieve_date date, :add_my_birthday
     return unless date
 
     @@user_details[:birthday] = date
-    context_message = "Please add at least one birthday to be reminded of.\n"\
-    'Please enter the name of the person whose birthday you would like to save'
-    prompt_user :add_birthday_details!, context_message
+
+    if @@ongoing_subscribe
+      context_message = "Please add at least one birthday to be reminded of.\n"\
+      'Please enter the name of the person whose birthday you would like to save'
+      prompt_user :add_birthday_details, context_message
+    else
+      find_user
+      update_save_user @@user, @@user_details
+    end
   end
 
-  def add_birthday_details!(name)
-    @@names = name
+  def add_birthday_details(first_name = '', last_name = '', *)
+    @@names = first_name << ' ' << last_name
     prompt_user :add_birthday, "Enter the birthday in the format 'DD/MM/YYYY'"
   end
 
-  def add_birthday(date)
+  def change_or_add_birthday!
+    context_message = 'Please enter the name of the person whose birthday you would like to save'
+    prompt_user :add_birthday_details, context_message
+  end
+
+  def add_birthday(date, *)
     names = @@names.strip.split(' ')
     names.map!(&:capitalize)
 
@@ -88,11 +109,15 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     @@birthdays[names.join(' ')] = date
     @@important_days[:birthdays] = @@birthdays
     send_message 'The birthday has been successfully added.'
+    if @@ongoing_subscribe
+      context_message = "Please add at least one anniversary to be reminded of.\n"\
+      'Please enter the name of the couple whose anniversary you would like to save'
 
-    context_message = "Please add at least one anniversary to be reminded of.\n"\
-    'Please enter the name of the couple whose anniversary you would like to save'
-
-    prompt_user :add_anniversary_details!, context_message
+      prompt_user :add_anniversary_details, context_message
+    else
+      find_user
+      update_user
+    end
   end
 
   def retrieve_date(date, context)
@@ -106,9 +131,15 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     date
   end
 
-  def add_anniversary_details!(name)
-    @@names = name
+  def add_anniversary_details(first_name = '', last_name = '', *)
+    @@names = first_name << last_name
     prompt_user :add_anniversary, "Enter the anniversary in the format 'DD/MM/YYYY'"
+  end
+
+  def change_or_add_anniversary!
+    context_message = 'Please enter the name of the couple whose anniversary you would like to save'
+
+    prompt_user :add_anniversary_details, context_message
   end
 
   def add_anniversary(date)
@@ -129,17 +160,21 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     @@important_days[:anniversaries] = @@anniversaries
     send_message 'The anniversary has been successfully added.'
     @@messages.pop
-    subscribe_user
+    if @@ongoing_subscribe
+      subscribe_user
+    else
+      find_and_update_user
+    end
+  end
+
+  def find_and_update_user
+    find_user
+    update_user
   end
 
   def subscribe_user
     @@user_details[:important_days] = @@important_days
-    user = User.new(@@user_details)
-    if user.save
-      send_message 'Your subscription was successful.'
-    else
-      send_message "#{user.errors.full_messages} The subscription failed, please try again"
-    end
+    save_user @@user_details
   end
 
   def action_missing(_action, *_args)
@@ -148,9 +183,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def update!(*)
-    message = payload
-    @@chat_id = message['chat']['id']
-    @@user = User.find_by(chat_id: @@chat_id)
+    find_user
+
     if @@user.nil?
       send_message "The user subscription doesn't exist. Please enter "\
       '/subscribe to subscribe'
@@ -200,7 +234,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :update_birthday, "Enter the birthday in the format 'DD/MM/YYYY'"
   end
 
-  def update_birthday(date)
+  def update_birthday(*date)
     names = @@names.strip.split(' ')
     names.map!(&:capitalize)
     date = retrieve_date date, :update_birthday
@@ -212,7 +246,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :update_anniversary?, 'Please  enter y[es] or n[o] if would like to update or add an anniversary'
   end
 
-  def update_anniversary?(answer)
+  def update_anniversary?(*answer)
     case answer[0].downcase
     when 'y'
       context_message = 'Please enter the name of the couple whose anniversary you would like to update'
@@ -255,11 +289,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     @@important_days[:birthdays] = days[:birthdays].merge(@@birthdays)
     @@important_days[:anniversaries] = days[:anniversaries].merge(@@anniversaries)
     @@user_details[:important_days] = @@important_days
-    if @@user.update(@@user_details)
-      send_message 'Your subscription was successfully updated.'
-    else
-      send_message "#{user.errors.full_messages} The subscription update failed, please try again"
-    end
+    update_save_user @@user, @@user_details
   end
 
   def prompt_user(context, context_message)
@@ -269,7 +299,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     save_context context
   end
 
-  def send_message(text)
-    respond_with :message, text: text
+  def find_user
+    @@chat_id = message['chat']['id']
+    @@user = User.find_by(chat_id: @@chat_id)
   end
 end
