@@ -54,7 +54,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :add_gender, 'Please enter [m]ale or [f]emale for male or female respectively'
   end
 
-  def add_gender(gender = nil, *args)
+  def add_gender(gender = nil, *_args)
     context_message = "Enter your birthday in the format 'DD/MM/YYYY'"
     case gender[0].downcase
     when 'm'
@@ -89,7 +89,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
   end
 
-  def add_birthday_details(first_name = '', last_name = '', *args)
+  def add_birthday_details(first_name = '', last_name = '', *_args)
     @@names = first_name << ' ' << last_name
     prompt_user :add_birthday, "Enter the birthday in the format 'DD/MM/YYYY'"
   end
@@ -99,7 +99,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :add_birthday_details, context_message
   end
 
-  def add_birthday(date, *args)
+  def add_birthday(date, *_args)
     names = @@names.strip.split(' ')
     names.map!(&:capitalize)
 
@@ -131,7 +131,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     date
   end
 
-  def add_anniversary_details(first_name = '', last_name = '', *args)
+  def add_anniversary_details(first_name = '', last_name = '', *_args)
     @@names = first_name << last_name
     prompt_user :add_anniversary, "Enter the anniversary in the format 'DD/MM/YYYY'"
   end
@@ -234,7 +234,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :update_birthday, "Enter the birthday in the format 'DD/MM/YYYY'"
   end
 
-  def update_birthday(date=nil, *args)
+  def update_birthday(date = nil, *_args)
     names = @@names.strip.split(' ')
     names.map!(&:capitalize)
     date = retrieve_date date, :update_birthday
