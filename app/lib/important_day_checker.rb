@@ -24,8 +24,7 @@ class ImportantDayChecker
 
   def check_important_days(user = nil)
     if user.nil?
-      users = User.all
-      users.each do |usr|
+      User.all.each do |usr|
         check_important_days_for_user usr
 
         check_default_important_days usr
