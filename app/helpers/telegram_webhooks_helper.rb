@@ -50,8 +50,8 @@ module TelegramWebhooksHelper
     day_checker = ImportantDayChecker.new(
       config: {
         default_important_days: Rails.configuration.default_important_days,
-        group_id: Rails.application.secrets.telegram['group_id'] || ENV['group_id'],
-        channel_id: Rails.application.secrets.telegram['channel_id'] || ENV['channel_id']
+        group_id: group_id,
+        channel_id: channel_id
       },
       bot: bot
     )
@@ -70,16 +70,16 @@ module TelegramWebhooksHelper
   end
 
   def bot
-    token = Rails.application.secrets.telegram['bot']['token'] || ENV['BOT_TOKEN']
-    username = Rails.application.secrets.telegram['bot']['username'] || ENV['BOT_USERNAME']
+    token = Rails.application.secrets.telegram['bot']['token'] ? Rails.application.secrets.telegram['bot']['token'] : ENV['BOT_TOKEN']
+    username = Rails.application.secrets.telegram['bot']['username'] ? Rails.application.secrets.telegram['bot']['username'] : ENV['BOT_USERNAME']
     Telegram::Bot::Client.new(token, username)
   end
 
   def group_id
-    Rails.application.secrets.telegram['group_id'] || ENV['GROUP_ID']
+    Rails.application.secrets.telegram['group_id'] ? Rails.application.secrets.telegram['group_id'] : ENV['GROUP_ID']
   end
 
   def channel_id
-    Rails.application.secrets.telegram['channel_id'] || ENV['CHANNEL_ID']
+    Rails.application.secrets.telegram['channel_id'] ? Rails.application.secrets.telegram['channel_id'] : ENV['CHANNEL_ID']
   end
 end
