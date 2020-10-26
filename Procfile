@@ -1,1 +1,1 @@
-worker: bundle exec rake telegram:bot:poller -p $PORT -e $RAILS_ENV
+bot: bundle exec rake telegram:bot:poller 
