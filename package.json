@@ -1,32 +1,32 @@
 {
-    "name": "minderly_bot",
-    "version": "1.0.0",
-    "description": "This README would normally document whatever steps are necessary to get the application up and running.",
-    "main": "index.js",
-    "directories": {
-        "lib": "lib"
-    },
-    "scripts": {
-        "test": "bundle exec rspec",
-        "start": "ruby ./bin/bot_runner.rb",
-        "lint": "rubocop --except Style/FrozenStringLiteralComment -a",
-        "pre-commit": "npm test && npm run lint && git add . "
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Bluette1/minderly_bot.git"
-    },
-    "keywords": [
-        "telegram",
-        "bot"
-    ],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/Bluette1/minderly_bot/issues"
-    },
-    "homepage": "https://github.com/Bluette1/minderly_bot#readme",
-    "devDependencies": {
-        "husky": "^4.2.5"
-    }
+  "name": "minderly_bot",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get the application up and running.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "bundle exec rspec",
+    "start": "bin/rails telegram:bot:poller",
+    "lint": "rubocop --except Style/FrozenStringLiteralComment -a",
+    "pre-commit": "npm test && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bluette1/minderly_bot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bluette1/minderly_bot/issues"
+  },
+  "homepage": "https://github.com/Bluette1/minderly_bot#readme",
+  "devDependencies": {
+    "husky": "^4.2.5"
+  }
 }
