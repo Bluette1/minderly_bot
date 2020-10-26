@@ -1,1 +1,1 @@
-web: bin/rails telegram:bot:poller -p $PORT -e $RAILS_ENV
+worker: bin/rails telegram:bot:poller -p $PORT -e $RAILS_ENV
