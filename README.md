@@ -28,8 +28,8 @@ This is project is associated with the capstone project at the end of the main R
   ./bin/setup
   ```
 #### Setting Environment Variables
-  - You can set environment variables such as the bot's token locally to the `secrets.yml` file.
-  - To see how to do this, please reference the `secrets.sample.yaml` file
+  - You can set environment variables such as the bot's token in the `secrets.yml` file.
+  - To see how to do this, please reference the `secrets_copy.yml` file
 
 -  Then run the following commands in the terminal inside the project's root directory
   ```
@@ -65,6 +65,10 @@ Make sure the bot is running
 
 ## Deployment
 - You can deploy on [Heroku](https://devcenter.heroku.com/categories/ruby-support)
+ - Make sure you set up the environment variables required for the telegram config(bot_token, username, group_id, channel_id) for example:
+  `heroku config:set BOT_TOKEN='Bot token'`
+- Start the bot process using
+`heroku ps:scale bot=1`
 
 ## Potential Future Improvements / Ambitions
 - Add integration to [Google Calendar API](https://console.developers.google.com) in order to access national public holidays for the user.

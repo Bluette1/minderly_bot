@@ -1,4 +1,5 @@
 require_relative '../lib/important_day_checker'
+require 'telegram/bot'
 
 module TelegramWebhooksHelper
   def send_greetings
