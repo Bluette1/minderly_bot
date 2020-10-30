@@ -8,6 +8,7 @@ This is project is associated with the capstone project at the end of the main R
 
 - Ruby
 - Rails
+- Telegram API
 
 ## Description
 - This is a date checker. It keeps track of all your important events, such as birthdays, anniversaries, etc and sends out message notifications.
@@ -18,7 +19,7 @@ This is project is associated with the capstone project at the end of the main R
 
 ## Live Demo
 
-[Live Demo]()
+[Live app](https://t.me/xextris_bot)
 
 ### Run instructions 
   -  You can clone the GitHub repo and type the following commands in the terminal to run the bot locally

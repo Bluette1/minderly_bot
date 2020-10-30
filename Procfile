@@ -1,1 +1,1 @@
-web: bundle exec rake telegram:bot:poller --trace
+bot: bundle exec rails telegram:bot:poller 

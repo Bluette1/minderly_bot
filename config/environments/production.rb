@@ -1,6 +1,7 @@
 Rails.application.configure do
   # Set application domain, to be able to run `rake telegram:bot:set_webhook`
   # routes.default_url_options = {host: 'yourdomain.com', protocol: 'https'}
+  routes.default_url_options = {host: 'minderly-bot-app.herokuapp.com', protocol: 'https'}
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -70,4 +71,5 @@ Rails.application.configure do
    # Configure session store for telegram bot.
    config.telegram_updates_controller.session_store = :file_store,
    Rails.root.join('tmp', 'session_store')
+
 end
