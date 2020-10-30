@@ -1,0 +1,1 @@
+bot: bundle exec rails telegram:bot:poller 
