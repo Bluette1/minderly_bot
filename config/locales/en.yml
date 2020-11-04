@@ -1,0 +1,9 @@
+en:
+  telegram_webhooks:
+    start:
+      greet: Hi there!
+      help:
+        commands: |
+          Available cmds:
+          /start - Greeting.
+        
