@@ -19,7 +19,8 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
-config/secret*
+config/secret* 
+!secrets_copy.yml
 
 # Ignore node_modules
 node_modules/*
