@@ -70,13 +70,13 @@ Make sure the bot is running
 - Start the bot process using
 `heroku ps:scale bot=1`
 
-### Scheduling of jobs
+## Scheduling of jobs
 
 Set up the chron tasks manager by running the following commands
 
 - In the development environment
 ```
-whenever --update-crontab --set environment='development'
+bundle exec whenever --update-crontab --set environment='development'
 ```
 
 - [On Heroku](https://devcenter.heroku.com/articles/scheduler)
