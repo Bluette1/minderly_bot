@@ -61,7 +61,7 @@ Make sure the bot is running
     - Should be in the format "DD/MM/YYYY", for example, "12/06/1993" 
 
 ### Run Tests
-- `bundle exec rake` to run the tests
+- `bundle exec rspec` to run the tests
 
 ## Deployment
 - You can deploy on [Heroku](https://devcenter.heroku.com/categories/ruby-support)
@@ -69,6 +69,22 @@ Make sure the bot is running
   `heroku config:set BOT_TOKEN='Bot token'`
 - Start the bot process using
 `heroku ps:scale bot=1`
+
+### Scheduling of jobs
+
+Set up the chron tasks manager by running the following commands
+
+- In the development environment
+```
+whenever --update-crontab --set environment='development'
+```
+
+- [On Heroku](https://devcenter.heroku.com/articles/scheduler)
+  ```
+  heroku addons:create scheduler:standard
+  heroku addons:open scheduler
+  ```
+   Then add the chron job in the scheduler's dashboard
 
 ## Potential Future Improvements / Ambitions
 - Add integration to [Google Calendar API](https://console.developers.google.com) in order to access national public holidays for the user.
