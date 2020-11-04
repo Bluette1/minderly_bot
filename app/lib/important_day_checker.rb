@@ -7,17 +7,7 @@ class ImportantDayChecker
   end
 
   def check_today(user = nil)
-    if user.nil?
-      Thread.new do
-        loop do
-          check_important_days
-          interval = 24 * 3600
-          sleep(interval)
-        end
-      end
-    else
-      check_important_days user
-    end
+    check_important_days user
   end
 
   private
@@ -34,7 +24,6 @@ class ImportantDayChecker
       check_default_important_days user
 
       check_important_days_for_user user
-
     end
   end
 

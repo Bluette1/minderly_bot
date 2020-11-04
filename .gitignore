@@ -19,7 +19,10 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
-config/secrets.yml
+config/secret* 
+!secrets_copy.yml
+#for running the tests on CI
+!secrets.yml 
 
 # Ignore node_modules
 node_modules/*

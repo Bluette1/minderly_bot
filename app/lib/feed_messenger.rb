@@ -17,19 +17,7 @@ class FeedMessenger
   end
 
   def send_feed(chat_id = nil)
-    if chat_id.nil?
-      Thread.new do
-        sleep(60)
-        check_news
-        loop do
-          interval = 3600
-          sleep(interval)
-          check_news
-        end
-      end
-    else
-      check_news chat_id
-    end
+    check_news chat_id
   end
 
   private
