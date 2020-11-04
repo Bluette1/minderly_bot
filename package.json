@@ -10,7 +10,7 @@
     "test": "bundle exec rspec",
     "start": "bin/rails telegram:bot:poller",
     "lint": "rubocop --except Style/FrozenStringLiteralComment -a",
-    "pre-commit": "npm test && npm run lint"
+    "pre-commit": "npm test && npm run lint && git add ."
   },
   "repository": {
     "type": "git",

@@ -44,18 +44,18 @@ gem 'telegram-bot', '>= 0.14'
 
 group :development, :test do
   gem 'awesome_print'
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
   gem 'hirb'
   gem 'pry'
   gem 'pry-byebug', platforms: [:mri]
   gem 'pry-doc', platforms: [:mri]
   gem 'pry-nav', platforms: [:jruby]
   gem 'pry-rails'
+  gem 'rails-controller-testing'
   gem 'rspec-its'
   gem 'rspec-rails'
-  gem 'spring-commands-rspec'
-  gem 'database_cleaner-active_record'
-  gem 'factory_bot_rails'
-  gem 'rails-controller-testing'
   gem 'shoulda-matchers'
+  gem 'spring-commands-rspec'
 end
 gem 'whenever', require: false

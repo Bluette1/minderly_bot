@@ -8,7 +8,7 @@ module TelegramWebhooksHelper
     ]
 
     first_name = from ? ", #{from['first_name']}" : ''
-    
+
     send_message "#{greetings.sample.capitalize}#{first_name}!\n Enter /help for options."
   end
 
