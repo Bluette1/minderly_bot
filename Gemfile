@@ -53,5 +53,9 @@ group :development, :test do
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'spring-commands-rspec'
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
+  gem 'rails-controller-testing'
+  gem 'shoulda-matchers'
 end
 gem 'whenever', require: false
