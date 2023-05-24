@@ -8,7 +8,7 @@ class FeedMessenger
     @bot = options [:bot]
     @config = options [:config]
     @urls = [
-      'https://www.history.com/.rss/full/this-day-in-history',
+      'https://www.onthisday.com/rss/today-in-history.xml',
       'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
       'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
       'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml',
@@ -43,22 +43,24 @@ class FeedMessenger
   end
 
   def pre_post_append(channel)
-    channel = if channel.match?(/...History.../i)
-                channel.center(58, '=')
-              else
-                channel.center(81, '-')
-              end
-    channel
+    if channel.match?(/...History.../i)
+      channel.center(58, '=')
+    else
+      channel.center(81, '-')
+    end
   end
 
   def send_to_users(news, channel, chat_id = nil)
     users = User.all
-    choice = rand(5)
+    choice = rand(news.keys.length)
     news_item = choose_news_item choice, news, channel
+
     if chat_id.nil?
       users.each do |user|
         feed user.chat_id, news_item
       end
+      feed config[:group_id], news_item unless config[:group_id].nil?
+      feed config[:channel_id], news_item unless config[:channel_id].nil?
     else
       feed chat_id, news_item
     end
@@ -66,10 +68,6 @@ class FeedMessenger
 
   def feed(chat_id, news_item)
     send_rss news_item, chat_id
-
-    send_rss news_item, config[:group_id] unless config[:group_id].nil?
-
-    send_rss news_item, config[:channel_id] unless config[:channel_id].nil?
   end
 
   def choose_news_item(choice, news, channel)
@@ -77,7 +75,6 @@ class FeedMessenger
     index = 0
     news.each do |title, link|
       if choice == index
-        news_item = {}
         news_item[:channel] = channel
         news_item[:title] = title
         news_item[:link] = link

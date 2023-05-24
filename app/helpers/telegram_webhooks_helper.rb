@@ -7,7 +7,7 @@ module TelegramWebhooksHelper
       bonjour hola hallo sveiki namaste shalom salaam szia halo ciao
     ]
 
-    first_name = from ? ", #{from['first_name']}" : ''
+    first_name = from ? ', ' + from['first_name'] : ''
 
     send_message "#{greetings.sample.capitalize}#{first_name}!\n Enter /help for options."
   end

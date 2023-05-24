@@ -1,6 +1,9 @@
 class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
   include TelegramWebhooksHelper
+  rescue_from Telegram::Bot::Error, with: :error_generic
+  rescue_from Exception, with: :error_generic
+
   Rails.application.config.session_store :memory_store, key: '_minderly_bot_app'
   @@user_details = {}
   @@important_days = {}
@@ -24,18 +27,20 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def news!(*)
-    send_news message['chat']['id']
+    send_news chat['id']
   end
 
-  def message
-    payload
+  def message(message)
+    respond_with :message, text: message['text'] unless message['text'].nil?
+    send_options
   end
 
   def subscribe!(*)
     find_user
     unless @@user.nil?
       send_message "You are already subscribed, please enter '/update'"\
-         'to update your subscription'
+        'to update your subscription'
+      return
     end
 
     @@ongoing_subscribe = true
@@ -175,6 +180,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def subscribe_user
     @@user_details[:important_days] = @@important_days
     save_user @@user_details
+    clear
   end
 
   def action_missing(_action, *_args)
@@ -188,9 +194,10 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     if @@user.nil?
       send_message "The user subscription doesn't exist. Please enter "\
       '/subscribe to subscribe'
+      nil
+    else
+      prompt_user :update_my_birthday?, 'Please  enter y[es] or n[o] if would like to update your birthday'
     end
-
-    prompt_user :update_my_birthday?, 'Please  enter y[es] or n[o] if would like to update your birthday'
   end
 
   def update_my_birthday?(answer)
@@ -198,9 +205,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     when 'y'
       prompt_user :update_my_birthday, "Enter your birthday in the format 'DD/MM/YYYY'"
     when 'n'
-      context_message = 'Please  enter y[es] or n[o] if you would like to update or add a birthday'
-      @@messages << context_message
-      send_message context_message
+      context_message = 'Please enter y[es] or n[o] if you would like to update or add a birthday'
       prompt_user :update_birthday?, context_message
     else
       send_message @@messages[-1]
@@ -219,13 +224,13 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def update_birthday?(answer, *_args)
     case answer[0].downcase
     when 'y'
-      context_message = 'Please enter the name of the person whose birthday you would like to update'
+      context_message = 'Please enter the name of the person whose birthday you would like to add or update'
       prompt_user :update_birthday_details, context_message
     when 'n'
       prompt_user :update_anniversary?, 'Please  enter y[es] or n[o] if would like to update or add an anniversary'
     else
       send_message @@messages[-1]
-      save_context :update_my_birthday?
+      save_context :update_birthday?
     end
   end
 
@@ -246,16 +251,16 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     prompt_user :update_anniversary?, 'Please  enter y[es] or n[o] if would like to update or add an anniversary'
   end
 
-  def update_anniversary?(*answer)
+  def update_anniversary?(answer, *_args)
     case answer[0].downcase
     when 'y'
-      context_message = 'Please enter the name of the couple whose anniversary you would like to update'
+      context_message = 'Please enter the name of the couple whose anniversary you would like to add or update'
       prompt_user :update_anniversary_details, context_message
     when 'n'
       update_user
     else
       send_message @@messages[-1]
-      save_context :update_my_birthday?
+      save_context :update_anniversary?
     end
   end
 
@@ -300,7 +305,21 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def find_user
-    @@chat_id = message['chat']['id']
+    @@chat_id = chat['id']
     @@user = User.find_by(chat_id: @@chat_id)
+  end
+
+  def error_generic(exception)
+    puts "An error occurred: #{exception}"
+  end
+
+  def clear
+    @@user_details = {}
+    @@important_days = {}
+    @@birthdays = {}
+    @@anniversaries = {}
+    @@messages = []
+    @@names = ''
+    @@ongoing_subscribe = false
   end
 end

@@ -14,7 +14,7 @@ This is project is associated with the capstone project at the end of the main R
 - This is a date checker. It keeps track of all your important events, such as birthdays, anniversaries, etc and sends out message notifications.
 - It also sends out RSS feeds to subscribed users and channels.
 
-- The [Telegram Bot Api](https://core.telegram.org/bots/api) was used to build this project.
+- The [Telegram Bot API](https://core.telegram.org/bots/api) was used to build this project.
 - Built using the [telegram-bot](https://github.com/telegram-bot-rb/telegram-bot) gem.
 
 ## Live Demo
@@ -48,7 +48,7 @@ Make sure the bot is running
   with the bot.
 
 ### Available commands
-- Please enter any of the following commands: ["/start", "/help", "/stop", "/news", "/add_my_birthday", "/add_birthday", "/add_anniversary", "/subscribe", "/update"]
+- Please enter any of the following commands:  ["/start", "/help", "/stop", "/news", "/change_my_birthday", "/change_or_add_birthday", "/change_or_add_anniversary", "/subscribe", "/update"]
 
 ### Possible errors
 - An incorrect entry for the date might throw a `Date.parse` error: 
@@ -61,7 +61,7 @@ Make sure the bot is running
     - Should be in the format "DD/MM/YYYY", for example, "12/06/1993" 
 
 ### Run Tests
-- `bundle exec rspec` to run the tests
+- `bundle exec rake` to run the tests
 
 ## Deployment
 - You can deploy on [Heroku](https://devcenter.heroku.com/categories/ruby-support)
@@ -69,22 +69,6 @@ Make sure the bot is running
   `heroku config:set BOT_TOKEN='Bot token'`
 - Start the bot process using
 `heroku ps:scale bot=1`
-
-## Scheduling of jobs
-
-Set up the chron tasks manager by running the following commands
-
-- In the development environment
-```
-bundle exec whenever --update-crontab --set environment='development'
-```
-
-- [On Heroku](https://devcenter.heroku.com/articles/scheduler)
-  ```
-  heroku addons:create scheduler:standard
-  heroku addons:open scheduler
-  ```
-   Then add the chron job in the scheduler's dashboard
 
 ## Potential Future Improvements / Ambitions
 - Add integration to [Google Calendar API](https://console.developers.google.com) in order to access national public holidays for the user.
